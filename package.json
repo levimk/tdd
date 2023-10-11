@@ -1,0 +1,32 @@
+{
+  "name": "tdd",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "sst bind astro dev",
+    "start": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro",
+    "sst:deploy": "sst deploy",
+    "sst:dev": "sst dev",
+    "test": "vitest --outputFile=./test_results/index.html",
+    "test:ui": "vitest --ui --outputFile=./test_results/index.html",
+    "test:preview": "npx vite preview --outDir ./test_results"
+  },
+  "dependencies": {
+    "@types/node": "^20.8.4",
+    "astro": "^3.2.4",
+    "dotenv": "^16.3.1",
+    "vite": "^4.4.11",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "@vitest/ui": "^0.34.6",
+    "astro-sst": "^2.28.1",
+    "aws-cdk-lib": "2.95.1",
+    "constructs": "10.2.69",
+    "sst": "^2.28.1",
+    "vitest": "^0.34.6"
+  }
+}
