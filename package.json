@@ -1,6 +1,5 @@
 {
   "name": "tdd",
-  "type": "module",
   "version": "0.0.1",
   "scripts": {
     "dev": "sst bind astro dev",
@@ -10,9 +9,11 @@
     "astro": "astro",
     "sst:deploy": "sst deploy",
     "sst:dev": "sst dev",
+    "test": "vitest ./katas",
     "bdd": "vitest --outputFile=./bdd_results/index.html",
     "bdd:ui": "vitest --ui --outputFile=./bdd_results/index.html",
-    "bdd:preview": "npx vite preview --outDir ./bdd_results"
+    "bdd:preview": "npx vite preview --outDir ./bdd_results",
+    "christmas_lights": "npx ts-node ./katas/christmas_lights/answers.ts"
   },
   "dependencies": {
     "@types/node": "^20.8.4",

@@ -19,7 +19,8 @@
     "paths": {
       "@/*": ["./src/*"]
     },
-    "outDir": "./build"
+    "outDir": "./build",
+    "verbatimModuleSyntax": false
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"]

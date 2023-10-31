@@ -1,0 +1,6 @@
+{
+   "nodeTdd.activateOnStartup": true,
+   "nodeTdd.showCoverage": false,
+   "nodeTdd.testScript": "test",
+   "editor.formatOnSave": true
+}
