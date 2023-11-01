@@ -1,5 +1,5 @@
 export default {
-    test: {
-      reporters: ['default', 'html']
-    }
-  }
+  test: {
+    reporters: ["default", "html"],
+  },
+};
