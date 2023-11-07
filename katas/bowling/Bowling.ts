@@ -28,7 +28,11 @@ export class Frame {
   }
 
   public isBowled(): boolean {
-    return this.bowl_1 != NOT_BOWLED && this.bowl_2 != NOT_BOWLED;
+    let isBowled = this.bowl_1 != NOT_BOWLED && this.bowl_2 != NOT_BOWLED;
+    if (this.isFinalFrame()) {
+      isBowled = isBowled && this.bowl_3 != NOT_BOWLED;
+    }
+    return isBowled;
   }
 
   private onNextBowl_1(pins: number) {

@@ -18,22 +18,6 @@ balls to complete the frame.  However no more than three balls can be rolled in
 tenth frame.
 */
 
-/*
-TODO: requirements
-  [_] 10 frames
-  [_] 1 frame
-      [_] Two opportunities to knock down 10 pins
-  [_] Spare: all ten pins in two tries
-      [_] Bonus: the number of pins knocked down in the NEXT bowl
-  [_] Strike: all ten pins in one try
-      [_] Bonus: the value of the next two balls rolled
-  [_] Tenth roll: a spare or a strike gets another roll.
-      [_] Constraint: no more than three bowls in the tenth frame
-
-TODO: rolling
-  [_] Frame 1. Bowl 1 = 1. Bowl 2 = 4. Total = 5
-*/
-
 describe("Bowling Game", () => {
   it("should start the game on 0", () => {
     const game = new BowlingGame();
@@ -215,6 +199,7 @@ describe("Bowling playthroughs", () => {
     expect(game.round(7).runningTotal()).toBe(77);
     expect(game.round(8).runningTotal()).toBe(97);
     expect(game.round(9).runningTotal()).toBe(117);
+    expect(game.round(10).frameTotal()).toBe(16);
     expect(game.round(10).runningTotal()).toBe(133);
     expect(game.score()).toBe(133);
   });
