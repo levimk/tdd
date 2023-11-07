@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import BowlingGame from "./Bowling";
+import BowlingGame, { Frame } from "./Bowling";
 /*
 The game consists of 10 frames as shown above.  In each frame the player has
 two opportunities to knock down 10 pins.  The score for the frame is the total
@@ -40,7 +40,7 @@ describe("Bowling Game", () => {
     expect(game.score()).toBe(0);
   });
 
-  it("should validate score for a bowl", () => {
+  it("should not accept bowls below 0 or above 10", () => {
     const game = new BowlingGame();
     const tooLow = () => game.bowl(-1);
     const tooHigh = () => game.bowl(11);
@@ -68,80 +68,154 @@ describe("Bowling Game", () => {
     const game = new BowlingGame();
     game.bowl(1);
     game.bowl(4);
-    expect(game.round(1).bowl_1).toBe(1);
-    expect(game.round(1).bowl_2).toBe(4);
-    expect(game.round(1).subtotal).toBe(5);
-  });
-
-  it("should show score for a round after first bowl", () => {
-    const game = new BowlingGame();
-    game.bowl(1);
-    expect(game.round(1).bowl_1).toBe(1);
-    expect(game.round(1).bowl_2).toBe(undefined);
-    expect(game.round(1).subtotal).toBe(1);
+    expect(game.round(1).getBowl_1()).toBe(1);
+    expect(game.round(1).getBowl_2()).toBe(4);
+    expect(game.round(1).frameTotal()).toBe(5);
   });
 
   it("should not have scores for rounds that have not been played yet", () => {
     const game = new BowlingGame();
     game.bowl(1);
     game.bowl(4);
-    expect(game.round(2).bowl_1).toBe(undefined);
-    expect(game.round(2).bowl_2).toBe(undefined);
-    expect(game.round(2).subtotal).toBe(undefined);
+    expect(game.round(2).getBowl_1()).toBe(undefined);
+    expect(game.round(2).getBowl_2()).toBe(undefined);
+    expect(game.round(2).frameTotal()).toBe(0);
+    expect(game.score()).toBe(5);
   });
 
-  it("should not have a score for a spare frame if there is not a next bowl yet", () => {
-    const game = new BowlingGame();
-    game.bowl(5);
-    game.bowl(5);
-    expect(game.round(1).subtotal).toBe(undefined);
-  });
-
-  it("should add the pins from the next roll to the score of preceding spare frame", () => {
-    const game = new BowlingGame();
-    game.bowl(5);
-    game.bowl(5);
-    game.bowl(1);
-    expect(game.round(1).subtotal).toBe(11);
-  });
-
-  it.skip("should not have a score for a frame unless the next two bowls", () => {
-    const game = new BowlingGame();
-    game.bowl(10);
-    expect(game.round(1).subtotal).toBe(undefined);
-    game.bowl(0);
-    expect(game.round(1).subtotal).toBe(undefined);
-  });
-
-  it.skip("should add the value of the next two rolls to a strike frame", () => {
+  it("should add the value of the next two rolls to a strike frame", () => {
     const game = new BowlingGame();
     game.bowl(10);
     game.bowl(1);
     game.bowl(2);
-    expect(game.round(1).subtotal).toBe(13);
+    expect(game.round(1).frameTotal()).toBe(13);
+  });
+});
+
+describe("Frame", () => {
+  describe("Normal frame", () => {
+    it("should record bowl 1 of a normal frame", () => {
+      const frame = new Frame(1, undefined);
+      frame.bowl(1);
+      expect(frame.frameTotal()).toBe(1);
+    });
+    it("should record bowl 2 of a normal frame", () => {
+      const frame = new Frame(1, undefined);
+      frame.bowl(1);
+      frame.bowl(1);
+      expect(frame.frameTotal()).toBe(2);
+    });
+    it("should add the previous frame's total to the running total", () => {
+      const frame_1 = new Frame(1, undefined);
+      const frame_2 = new Frame(2, frame_1);
+      frame_1.bowl(1);
+      frame_1.bowl(4);
+      frame_2.bowl(4);
+      frame_2.bowl(5);
+      expect(frame_1.frameTotal()).toBe(5);
+      expect(frame_2.frameTotal()).toBe(9);
+      expect(frame_2.runningTotal()).toBe(14);
+    });
+    it("should take 3 bowls for final frame", () => {
+      const frame_1 = new Frame(1, undefined);
+      const frame_2 = new Frame(2, frame_1);
+      const frame_3 = new Frame(3, frame_2);
+      const frame_4 = new Frame(4, frame_3);
+      const frame_5 = new Frame(5, frame_4);
+      const frame_6 = new Frame(6, frame_5);
+      const frame_7 = new Frame(7, frame_6);
+      const frame_8 = new Frame(8, frame_7);
+      const frame_9 = new Frame(9, frame_8);
+      const frame_10 = new Frame(10, frame_9);
+      frame_9.bowl(1);
+      frame_9.bowl(2);
+      frame_10.bowl(3);
+      frame_10.bowl(4);
+      frame_10.bowl(5);
+      expect(frame_10.frameTotal()).toBe(12);
+      expect(frame_10.runningTotal()).toBe(15);
+    });
+  });
+  describe("Spare frame", () => {
+    it("should spare", () => {
+      const frame = new Frame(1, undefined);
+      frame.bowl(9);
+      frame.bowl(1);
+      expect(frame.isSpare()).toBe(true);
+    });
+    it("should add the first bowl of the next frame", () => {
+      const frame_1 = new Frame(1, undefined);
+      const frame_2 = new Frame(2, frame_1);
+      frame_1.bowl(9);
+      frame_1.bowl(1);
+      frame_2.bowl(3);
+      frame_2.bowl(4);
+      expect(frame_1.frameTotal()).toBe(13);
+      expect(frame_2.runningTotal()).toBe(20);
+    });
+  });
+  describe("Strike frame", () => {
+    it("should strike", () => {
+      const frame = new Frame(1, undefined);
+      frame.bowl(10);
+      const badBowl = () => frame.bowl(1);
+      expect(badBowl).toThrow();
+      expect(frame.frameTotal()).toBe(10);
+    });
+    it("should add both bowls of the next frame", () => {
+      const frame_1 = new Frame(1, undefined);
+      const frame_2 = new Frame(2, frame_1);
+      frame_1.bowl(10);
+      frame_2.bowl(3);
+      frame_2.bowl(4);
+      expect(frame_1.frameTotal()).toBe(17);
+      expect(frame_2.runningTotal()).toBe(24);
+    });
   });
 });
 
 describe("Bowling playthroughs", () => {
-  it.skip("should score a full game", () => {
+  it("should score a full game", () => {
     const game = new BowlingGame();
     game.bowl(1);
     game.bowl(4);
-    game.bowl(6);
+
     game.bowl(4);
     game.bowl(5);
+
+    game.bowl(6);
+    game.bowl(4);
+
     game.bowl(5);
+    game.bowl(5);
+
     game.bowl(10);
+
     game.bowl(0);
     game.bowl(1);
+
     game.bowl(7);
     game.bowl(3);
+
     game.bowl(6);
     game.bowl(4);
+
     game.bowl(10);
+
     game.bowl(2);
     game.bowl(8);
     game.bowl(6);
+
+    expect(game.round(1).runningTotal()).toBe(5);
+    expect(game.round(2).runningTotal()).toBe(14);
+    expect(game.round(3).runningTotal()).toBe(29);
+    expect(game.round(4).runningTotal()).toBe(49);
+    expect(game.round(5).runningTotal()).toBe(60);
+    expect(game.round(6).runningTotal()).toBe(61);
+    expect(game.round(7).runningTotal()).toBe(77);
+    expect(game.round(8).runningTotal()).toBe(97);
+    expect(game.round(9).runningTotal()).toBe(117);
+    expect(game.round(10).runningTotal()).toBe(133);
     expect(game.score()).toBe(133);
   });
 });
