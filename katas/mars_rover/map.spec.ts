@@ -1,7 +1,8 @@
 import { describe, it, expect } from "vitest";
 
-import MarsMap from "./map";
+import MarsMap, { Coordinate } from "./map";
 import Parser from "./parser";
+import { Position } from "./rover";
 
 const TEST_1 = "5 5\n1 2 N\nLMLMLMLMM\n3 3 E\nMMRMMRMRRM";
 
@@ -20,6 +21,20 @@ describe("MarsMap", () => {
       const dimensions = new Parser(TEST_1).mapSize();
       const createMap = () => new MarsMap(dimensions.width, dimensions.length);
       expect(createMap).not.toThrow();
+    });
+  });
+
+  describe("Check position", () => {
+    it("should detect that x=0, y=2 is not on a 2x2 map", () => {
+      const map = new MarsMap(2, 2);
+      const coordinate: Coordinate = {
+        x: 0,
+        y: 2,
+      };
+      expect(map.isOnMap(coordinate)).toBe(false);
+    });
+    it("should detect that x=2, y=0 is not on a 2x2 map", () => {
+      const map = new MarsMap(2, 2);
     });
   });
 });
