@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 
 import MarsMap, { Coordinate } from "./map";
 import Parser from "./parser";
-import { Position } from "./rover";
 
 const TEST_1 = "5 5\n1 2 N\nLMLMLMLMM\n3 3 E\nMMRMMRMRRM";
 
@@ -25,11 +24,11 @@ describe("MarsMap", () => {
   });
 
   describe("Check position", () => {
-    it("should detect that x=0, y=2 is not on a 2x2 map", () => {
+    it("should detect that x=0, y=3 is not on a 2x2 map", () => {
       const map = new MarsMap(2, 2);
       const coordinate: Coordinate = {
         x: 0,
-        y: 2,
+        y: 3,
       };
       expect(map.isOnMap(coordinate)).toBe(false);
     });

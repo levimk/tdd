@@ -1,0 +1,5 @@
+1 1
+0 0 N
+MRMR
+1 1 S
+MRMRRMLM

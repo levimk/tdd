@@ -113,14 +113,14 @@ describe("Rover", () => {
       orientation: "N",
     };
     const rover: Rover = new Rover(position, map);
-    rover.move("M");
-    rover.move("M");
-    rover.move("M");
-    rover.move("R");
-    rover.move("M");
+    rover.move("M"); // 0,0,N->0,1
+    rover.move("M"); // 0,1,N->0,2
+    rover.move("M"); // 0,2,N->0,2
+    rover.move("R"); // 0,2,N->0,2,E
+    rover.move("M"); // 0,2,E->1,2,E
     expect(rover.getPosition()).toStrictEqual({
       x: 1,
-      y: 1,
+      y: 2,
       orientation: "E",
     });
   });

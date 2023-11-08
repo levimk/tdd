@@ -24,8 +24,8 @@ export default class MarsMap {
     if (coordinate.x < 0 || coordinate.y < 0) {
       return false;
     } else {
-      const beyondWidth = coordinate.x >= this.width;
-      const beyondHeight = coordinate.y >= this.length;
+      const beyondWidth = coordinate.x > this.width;
+      const beyondHeight = coordinate.y > this.length;
       return !beyondWidth && !beyondHeight;
     }
   }
