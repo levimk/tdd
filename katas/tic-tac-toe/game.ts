@@ -1,5 +1,6 @@
 export type Mark = "X" | "O";
 export type Player = 1 | 2;
+export type Result 
 export class Game {
   private size: number = 3;
   private currPlayer: Player = 1;
@@ -52,6 +53,10 @@ export class Field {
     return this._mark;
   }
 
+  isMarked(): boolean {
+    return this._mark != undefined;
+  }
+
   mark(mark: Mark): void {
     if (this._mark != undefined) throw new Error("FieldError: already marked.");
     if (!(mark == "X" || mark == "O"))
@@ -68,7 +73,8 @@ export class Field {
 }
 
 export type FieldMap = Record<number, Record<number, Field>>;
-
+export type Coordinate = { x: number; y: number };
+export type Coordinates = Coordinate[];
 export class Board {
   private _size: number;
   private fieldMap: FieldMap;
@@ -77,7 +83,7 @@ export class Board {
     if (size < 1)
       throw new Error(`BoardError: size must be >= 1, received ${size}`);
     this._size = size;
-    this.fieldMap = {} as FieldMap;
+    this.fieldMap = Board.buildFreshFieldMap(size);
   }
 
   field(x: number, y: number) {
@@ -95,18 +101,16 @@ export class Board {
   }
 
   mark(mark: Mark, x: number, y: number): void {
+    this.validateMark(x, y);
+    this.fieldMap[x][y].mark(mark);
+  }
+
+  validateMark(x: number, y: number) {
     if (x < 0 || x >= this._size || y < 0 || y >= this._size)
       throw new Error(
         `BoardError: out of bounds mark ${x}, ${y} on ${this._size}x${this._size} board.`
       );
-    if (this.fieldMap[x] == undefined) {
-      this.fieldMap[x] = {};
-      this.fieldMap[x][y] = new Field();
-      this.fieldMap[x][y].mark(mark);
-    } else if (
-      this.fieldMap[x] != undefined &&
-      this.fieldMap[x][y] != undefined
-    ) {
+    if (this.fieldMap[x][y].getMark() != undefined) {
       throw new Error(`BoardError: field ${x}, ${y} is already marked.`);
     }
   }
@@ -117,7 +121,33 @@ export class Board {
     return newBoard;
   }
 
-  availableFields(): FieldMap {
-    return {};
+  availableFields(): Coordinates {
+    let available: Coordinates = [];
+    Object.entries(this.fieldMap).forEach(
+      ([x, yField]: [x: string, yField: Record<number, Field>]) => {
+        Object.entries(yField).forEach(
+          ([y, field]: [y: string, field: Field]) => {
+            if (!field.isMarked()) {
+              available.push({
+                x: parseInt(x),
+                y: parseInt(y),
+              });
+            }
+          }
+        );
+      }
+    );
+    return available;
+  }
+
+  private static buildFreshFieldMap(size: number): FieldMap {
+    let fieldMap: FieldMap = {};
+    for (let i = 0; i < size; i++) {
+      fieldMap[i] = {};
+      for (let j = 0; j < size; j++) {
+        fieldMap[i][j] = new Field();
+      }
+    }
+    return fieldMap;
   }
 }

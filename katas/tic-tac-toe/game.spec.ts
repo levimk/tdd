@@ -1,5 +1,5 @@
 import { it, describe, expect } from "vitest";
-import { Game, Board, Field, FieldMap } from "./game";
+import { Game, Board, Field, FieldMap, Coordinates } from "./game";
 
 /*
 Setup
@@ -37,8 +37,6 @@ describe("Tic Tac Toe", () => {
       const board = new Board(3);
       board.mark(Field.X, 0, 0);
       board.mark(Field.O, 1, 2);
-      console.log(board);
-      console.log(game.getBoard());
       expect(game.getBoard()).toEqual(board);
     });
 
@@ -123,11 +121,17 @@ describe("Tic Tac Toe", () => {
 
     it("should list all fields as available by default", () => {
       const board = new Board(3);
-      const expected: FieldMap = {
-        0: { 0: new Field(), 1: new Field(), 2: new Field() },
-        1: { 0: new Field(), 1: new Field(), 2: new Field() },
-        2: { 0: new Field(), 1: new Field(), 2: new Field() },
-      };
+      const expected: Coordinates = [
+        { x: 0, y: 0 },
+        { x: 0, y: 1 },
+        { x: 0, y: 2 },
+        { x: 1, y: 0 },
+        { x: 1, y: 1 },
+        { x: 1, y: 2 },
+        { x: 2, y: 0 },
+        { x: 2, y: 1 },
+        { x: 2, y: 2 },
+      ];
       expect(board.availableFields()).toStrictEqual(expected);
     });
 
@@ -142,7 +146,7 @@ describe("Tic Tac Toe", () => {
       board.mark(Field.X, 2, 0);
       board.mark(Field.X, 2, 1);
       board.mark(Field.X, 2, 2);
-      expect(board.availableFields()).toStrictEqual({});
+      expect(board.availableFields()).toStrictEqual([]);
     });
   });
 

@@ -90,7 +90,6 @@ export default class Parser {
   private parseMapSize(line: string) {
     const parts = line.split(" ");
     if (parts.length != 2) {
-      console.log("£££", parts);
       throw new Error(
         `ParserError: map size string should have exactly 2 parts, received ${parts.length}`
       );
