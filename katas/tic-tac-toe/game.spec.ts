@@ -123,8 +123,12 @@ describe("Tic Tac Toe", () => {
 
     it("should list all fields as available by default", () => {
       const board = new Board(3);
-      const expected = {};
-      expect(board.availableFields()).toStrictEqual({});
+      const expected: FieldMap = {
+        0: { 0: new Field(), 1: new Field(), 2: new Field() },
+        1: { 0: new Field(), 1: new Field(), 2: new Field() },
+        2: { 0: new Field(), 1: new Field(), 2: new Field() },
+      };
+      expect(board.availableFields()).toStrictEqual(expected);
     });
 
     it("should have no available fields after all the fields are marked", () => {
