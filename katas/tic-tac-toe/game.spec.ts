@@ -1,5 +1,5 @@
 import { it, describe, expect } from "vitest";
-import { Game, Board, Field, FieldMap, Coordinates } from "./game";
+import { Game, Board, Field, Coordinates, Result } from "./game";
 
 /*
 Setup
@@ -52,7 +52,55 @@ describe("Tic Tac Toe", () => {
       expect(game.getBoard().field(1, 1)).toEqual(field_1x1);
     });
 
-    it("should be finished when all the squares are full", () => {});
+    it("should be finished when all the squares are full", () => {
+      const game = new Game(3);
+      // o x x
+      // o o x
+      // x x o
+      game.takeTurn(0, 0); // x
+      game.takeTurn(0, 2); // o
+      game.takeTurn(0, 1); // x
+      game.takeTurn(1, 0); // o
+      game.takeTurn(1, 2); // x
+      game.takeTurn(1, 2); // o
+      game.takeTurn(2, 1); // x
+      game.takeTurn(2, 0); // o
+      game.takeTurn(2, 2); // x
+      const result: Result = "Draw";
+      expect(game.isComplete()).toBe(result);
+    });
+    it("should win on a row", () => {
+      const game = new Game(3);
+      // _ _ _
+      // _ _ _
+      // _ _ _
+      const result: Result = "X";
+      expect(game.isComplete()).toBe(result);
+    });
+    it("should win on a column", () => {
+      const game = new Game(3);
+      // _ _ _
+      // _ _ _
+      // _ _ _
+      const result: Result = "X";
+      expect(game.isComplete()).toBe(result);
+    });
+    it("should win on diagonal TL-BR", () => {
+      const game = new Game(3);
+      // _ _ _
+      // _ _ _
+      // _ _ _
+      const result: Result = "X";
+      expect(game.isComplete()).toBe(result);
+    });
+    it("should win on diagonal BR-TL", () => {
+      const game = new Game(3);
+      // _ _ _
+      // _ _ _
+      // _ _ _
+      const result: Result = "X";
+      expect(game.isComplete()).toBe(result);
+    });
   });
 
   describe.skip("Player", () => {

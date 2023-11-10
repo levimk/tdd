@@ -1,6 +1,6 @@
 export type Mark = "X" | "O";
 export type Player = 1 | 2;
-export type Result 
+export type Result = "Draw" | "X" | "O";
 export class Game {
   private size: number = 3;
   private currPlayer: Player = 1;
@@ -37,6 +37,10 @@ export class Game {
 
   private rotatePlayers() {
     this.currPlayer = this.nextPlayerMap[this.currPlayer];
+  }
+
+  isComplete(): Result {
+    return "Draw";
   }
 }
 
