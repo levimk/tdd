@@ -52,54 +52,76 @@ describe("Tic Tac Toe", () => {
       expect(game.getBoard().field(1, 1)).toEqual(field_1x1);
     });
 
-    it("should be finished when all the squares are full", () => {
+    it("should be a draw when all the squares are full and no one has a win", () => {
       const game = new Game(3);
-      // o x x
       // o o x
       // x x o
+      // x o x
       game.takeTurn(0, 0); // x
       game.takeTurn(0, 2); // o
       game.takeTurn(0, 1); // x
       game.takeTurn(1, 0); // o
-      game.takeTurn(1, 2); // x
+      game.takeTurn(1, 1); // x
       game.takeTurn(1, 2); // o
-      game.takeTurn(2, 1); // x
-      game.takeTurn(2, 0); // o
+      game.takeTurn(2, 0); // x
+      game.takeTurn(2, 1); // o
       game.takeTurn(2, 2); // x
       const result: Result = "Draw";
-      expect(game.isComplete()).toBe(result);
+      expect(game.getResult()).toBe(result);
     });
     it("should win on a row", () => {
       const game = new Game(3);
       // _ _ _
-      // _ _ _
-      // _ _ _
+      // _ o o
+      // x x x
+      game.takeTurn(0, 0); // x
+      game.takeTurn(1, 1); // o
+      game.takeTurn(1, 0); // x
+      game.takeTurn(2, 1); // o
+      game.takeTurn(2, 0); // x
       const result: Result = "X";
-      expect(game.isComplete()).toBe(result);
+      expect(game.getResult()).toBe(result);
     });
     it("should win on a column", () => {
       const game = new Game(3);
-      // _ _ _
-      // _ _ _
-      // _ _ _
-      const result: Result = "X";
-      expect(game.isComplete()).toBe(result);
+      // _ _ o
+      // x _ o
+      // x x o
+      game.takeTurn(0, 0); // x
+      game.takeTurn(2, 0); // o
+      game.takeTurn(1, 0); // x
+      game.takeTurn(2, 1); // o
+      game.takeTurn(0, 1); // x
+      game.takeTurn(2, 2); // o
+      const result: Result = "O";
+      expect(game.getResult()).toBe(result);
     });
     it("should win on diagonal TL-BR", () => {
       const game = new Game(3);
-      // _ _ _
-      // _ _ _
-      // _ _ _
+      // x _ o
+      // _ x o
+      // _ _ x
+      game.takeTurn(0, 2); // x
+      game.takeTurn(2, 2); // o
+      game.takeTurn(1, 1); // x
+      game.takeTurn(2, 1); // o
+      game.takeTurn(2, 0); // x
       const result: Result = "X";
-      expect(game.isComplete()).toBe(result);
+      expect(game.getResult()).toBe(result);
     });
     it("should win on diagonal BR-TL", () => {
       const game = new Game(3);
-      // _ _ _
-      // _ _ _
-      // _ _ _
-      const result: Result = "X";
-      expect(game.isComplete()).toBe(result);
+      // o _ _
+      // x o x
+      // _ x o
+      game.takeTurn(0, 1); // x
+      game.takeTurn(1, 1); // o
+      game.takeTurn(2, 1); // x
+      game.takeTurn(0, 2); // o
+      game.takeTurn(1, 0); // x
+      game.takeTurn(2, 0); // o
+      const result: Result = "O";
+      expect(game.getResult()).toBe(result);
     });
   });
 
@@ -112,9 +134,9 @@ describe("Tic Tac Toe", () => {
   describe("Board", () => {
     it("should be a square", () => {
       const board_3x3 = new Board(3);
-      expect(board_3x3.size()).toBe(9);
+      expect(board_3x3.squares()).toBe(9);
       const board_4x4 = new Board(4);
-      expect(board_4x4.size()).toBe(16);
+      expect(board_4x4.squares()).toBe(16);
     });
 
     it("should be a valid size", () => {

@@ -1,6 +1,6 @@
 export type Mark = "X" | "O";
 export type Player = 1 | 2;
-export type Result = "Draw" | "X" | "O";
+export type Result = "Playing" | "Draw" | "X" | "O";
 export class Game {
   private size: number = 3;
   private currPlayer: Player = 1;
@@ -39,8 +39,45 @@ export class Game {
     this.currPlayer = this.nextPlayerMap[this.currPlayer];
   }
 
-  isComplete(): Result {
-    return "Draw";
+  getResult(): Result {
+    if (this.checkRows() !== undefined) return this.checkRows() as Mark;
+    if (this.checkColumns() !== undefined) return this.checkColumns() as Mark;
+    if (this.isDraw()) {
+      return "Draw";
+    }
+    return "Playing";
+  }
+
+  private checkTLtoBR() {
+    for (let i = 0; i < this.board.size(); i++) {}
+  }
+
+  private checkRows(): Mark | undefined {
+    for (let row = 0; row < this.board.size(); row++) {
+      let isWin = this.board.field(0, row).equals(this.board.field(1, row));
+      for (let col = 1; col < this.board.size(); col++) {
+        isWin =
+          isWin &&
+          this.board.field(col, row).equals(this.board.field(col - 1, row));
+      }
+      if (isWin) return this.board.field(0, row).getMark() as Mark;
+    }
+  }
+  private checkColumns(): Mark | undefined {
+    for (let col = 0; col < this.board.size(); col++) {
+      let isWin = this.board.field(col, 0).equals(this.board.field(col, 1));
+      for (let row = 1; row < this.board.size(); row++) {
+        isWin =
+          isWin &&
+          this.board.field(col, row).equals(this.board.field(col, row - 1));
+      }
+      if (isWin) return this.board.field(col, 0).getMark() as Mark;
+    }
+  }
+
+  private isDraw() {
+    console.log("Available fields:", this.board.availableFields());
+    return this.board.availableFields().length == 0;
   }
 }
 
@@ -101,6 +138,10 @@ export class Board {
   }
 
   size(): number {
+    return this._size;
+  }
+
+  squares(): number {
     return this._size * this._size;
   }
 
@@ -114,9 +155,6 @@ export class Board {
       throw new Error(
         `BoardError: out of bounds mark ${x}, ${y} on ${this._size}x${this._size} board.`
       );
-    if (this.fieldMap[x][y].getMark() != undefined) {
-      throw new Error(`BoardError: field ${x}, ${y} is already marked.`);
-    }
   }
 
   static from(board: Board): Board {
