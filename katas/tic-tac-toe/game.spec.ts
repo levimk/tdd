@@ -19,10 +19,6 @@ a game is over when all fields in a diagonal are taken by a player
 
 describe("Tic Tac Toe", () => {
   describe("Game", () => {
-    it("should start a game on 3x3 board", () => {
-      const createGame = () => new Game(3);
-      expect(createGame).not.toThrow();
-    });
     it("should a on a board that is too small", () => {
       const createGame = (n: number) => () => new Game(n);
       expect(createGame(-1)).toThrow();
@@ -30,7 +26,7 @@ describe("Tic Tac Toe", () => {
       expect(createGame(1)).toThrow();
     });
 
-    it("should move on to the next player after one player has taken a turn", () => {
+    it("should let players takes turns in order", () => {
       const game = new Game(3);
       game.takeTurn(0, 0);
       game.takeTurn(1, 2);
@@ -38,6 +34,7 @@ describe("Tic Tac Toe", () => {
       board.mark(Field.X, 0, 0);
       board.mark(Field.O, 1, 2);
       expect(game.getBoard()).toEqual(board);
+      expect(game.isFinished()).toBe(false);
     });
 
     it("should allow a player to take a turn", () => {
@@ -50,25 +47,28 @@ describe("Tic Tac Toe", () => {
       field_1x1.mark(Field.O);
       game.takeTurn(1, 1);
       expect(game.getBoard().field(1, 1)).toEqual(field_1x1);
+      expect(game.isFinished()).toBe(false);
     });
 
     it("should be a draw when all the squares are full and no one has a win", () => {
       const game = new Game(3);
-      // o o x
-      // x x o
+      // o x x
+      // x o o
       // x o x
-      game.takeTurn(0, 0); // x
-      game.takeTurn(0, 2); // o
       game.takeTurn(0, 1); // x
+      game.takeTurn(0, 2); // o
+      game.takeTurn(0, 0); // x
       game.takeTurn(1, 0); // o
-      game.takeTurn(1, 1); // x
-      game.takeTurn(1, 2); // o
+      game.takeTurn(1, 2); // x
+      game.takeTurn(1, 1); // o
       game.takeTurn(2, 0); // x
       game.takeTurn(2, 1); // o
       game.takeTurn(2, 2); // x
       const result: Result = "Draw";
       expect(game.getResult()).toBe(result);
+      expect(game.isFinished()).toBe(true);
     });
+
     it("should win on a row", () => {
       const game = new Game(3);
       // _ _ _
@@ -81,7 +81,9 @@ describe("Tic Tac Toe", () => {
       game.takeTurn(2, 0); // x
       const result: Result = "X";
       expect(game.getResult()).toBe(result);
+      expect(game.isFinished()).toBe(true);
     });
+
     it("should win on a column", () => {
       const game = new Game(3);
       // _ _ o
@@ -95,7 +97,9 @@ describe("Tic Tac Toe", () => {
       game.takeTurn(2, 2); // o
       const result: Result = "O";
       expect(game.getResult()).toBe(result);
+      expect(game.isFinished()).toBe(true);
     });
+
     it("should win on diagonal TL-BR", () => {
       const game = new Game(3);
       // x _ o
@@ -108,20 +112,23 @@ describe("Tic Tac Toe", () => {
       game.takeTurn(2, 0); // x
       const result: Result = "X";
       expect(game.getResult()).toBe(result);
+      expect(game.isFinished()).toBe(true);
     });
-    it("should win on diagonal BR-TL", () => {
+
+    it("should win on diagonal BL-TR", () => {
       const game = new Game(3);
-      // o _ _
+      // _ _ o
       // x o x
-      // _ x o
+      // o x _
       game.takeTurn(0, 1); // x
-      game.takeTurn(1, 1); // o
+      game.takeTurn(0, 0); // o
       game.takeTurn(2, 1); // x
-      game.takeTurn(0, 2); // o
+      game.takeTurn(1, 1); // o
       game.takeTurn(1, 0); // x
-      game.takeTurn(2, 0); // o
+      game.takeTurn(2, 2); // o
       const result: Result = "O";
       expect(game.getResult()).toBe(result);
+      expect(game.isFinished()).toBe(true);
     });
   });
 

@@ -1,9 +1,10 @@
 export type Mark = "X" | "O";
 export type Player = 1 | 2;
-export type Result = "Playing" | "Draw" | "X" | "O";
+export type Result = "Draw" | "X" | "O";
 export class Game {
   private size: number = 3;
   private currPlayer: Player = 1;
+  private result: Result | undefined = undefined;
   private nextPlayerMap: Record<Player, Player> = {
     1: 2,
     2: 1,
@@ -39,17 +40,48 @@ export class Game {
     this.currPlayer = this.nextPlayerMap[this.currPlayer];
   }
 
-  getResult(): Result {
-    if (this.checkRows() !== undefined) return this.checkRows() as Mark;
-    if (this.checkColumns() !== undefined) return this.checkColumns() as Mark;
+  getResult(): Result | undefined {
+    this.result = this.setResult();
+    return this.result;
+  }
+
+  private setResult(): Result | undefined {
+    if (this.checkRows() != undefined) return this.checkRows() as Mark;
+    if (this.checkColumns() != undefined) return this.checkColumns() as Mark;
+    if (this.checkTLtoBR() != undefined) return this.checkTLtoBR() as Mark;
+    if (this.checBLtoTR() != undefined) return this.checBLtoTR() as Mark;
     if (this.isDraw()) {
       return "Draw";
     }
-    return "Playing";
+    return undefined;
   }
 
-  private checkTLtoBR() {
-    for (let i = 0; i < this.board.size(); i++) {}
+  private checkTLtoBR(): Mark | undefined {
+    let tl = this.board.field(0, this.board.size() - 1);
+    for (let col = 0; col < this.board.size(); col++) {
+      for (let row = this.board.size() - 1; row >= 0; row--) {
+        const isOnDiagnol: boolean = col + row + 1 == this.board.size();
+        const isSameMark: boolean =
+          this.board.field(col, row).getMark() == tl.getMark();
+        if (isOnDiagnol && !isSameMark) {
+          return undefined;
+        }
+      }
+    }
+    return tl.getMark();
+  }
+
+  private checBLtoTR(): Mark | undefined {
+    let bottomLeft = this.board.field(0, 0);
+    for (let i = 1; i < this.board.size(); i++) {
+      const isSameMark: boolean =
+        this.board.field(i, i).getMark() ==
+        this.board.field(i - 1, i - 1).getMark();
+      if (!isSameMark) {
+        return undefined;
+      }
+    }
+    return bottomLeft.getMark();
   }
 
   private checkRows(): Mark | undefined {
@@ -76,8 +108,10 @@ export class Game {
   }
 
   private isDraw() {
-    console.log("Available fields:", this.board.availableFields());
     return this.board.availableFields().length == 0;
+  }
+  isFinished(): boolean {
+    return this.result != undefined;
   }
 }
 
